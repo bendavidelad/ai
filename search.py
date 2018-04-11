@@ -65,46 +65,64 @@ def depth_first_search(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
-    fringe = util.Stack()
-    actions_stack = util.Stack()
-    visited_states = set()
-
-    current_state = (problem.get_start_state(), -1, 0)
-    # fringe.push(current_state)
-    successors = problem.get_successors(current_state[0])
-    for successor in successors:
-        fringe.push(successor)
-
-    while len(successors) != 0:
-        if problem.is_goal_state(current_state[0]):
-            return actions_stack.list
-        current_state = fringe.pop()
-        actions_stack.push(current_state[1])
-        if current_state not in visited_states:
-            successors = problem.get_successors(current_state[0])
-            for successor in successors:
-                fringe.push(successor)
-        else:
-            actions_stack.pop()
-
-    return actions_stack.list
+    return search_helper(problem, util.Stack())
 
 
 def breadth_first_search(problem):
     """
     Search the shallowest nodes in the search tree first.
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return search_helper(problem, util.Queue())
 
 
 def uniform_cost_search(problem):
     """
     Search the node of least total cost first.
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    counter = 0
+    fringe = util.PriorityQueue()
+    visited_states = set()
+    current_state = [problem.get_start_state(), [], 0]
+    successors = problem.get_successors(current_state[0])
+    for successor in successors:
+        fringe.push((counter, [successor, [successor[1]], successor[2]]), successor[2])
+        counter += 1
+
+    while len(fringe.heap) != 0:
+        current_state = fringe.pop()
+        if problem.is_goal_state(current_state[1][0][0]):
+            return current_state[1][1]
+        else:
+            if current_state[1][0][0] not in visited_states:
+                visited_states.add(current_state[1][0][0])
+                successors = problem.get_successors(current_state[1][0][0])
+                for successor in successors:
+                    fringe.push((counter, [successor, current_state[1][1] + [successor[1]], current_state[1][2] +
+                                           successor[2]]), current_state[1][2] + successor[2])
+                    counter += 1
+    return []
+
+
+
+def search_helper(problem, fringe):
+    visited_states = set()
+    current_state = [(problem.get_start_state(), -1, 0), []]
+    successors = problem.get_successors(current_state[0][0])
+    for successor in successors:
+        fringe.push([successor, [successor[1]]])
+
+    while len(fringe.list) != 0:
+        current_state = fringe.pop()
+        if problem.is_goal_state(current_state[0][0]):
+            return current_state[1]
+        else:
+            if current_state[0][0] not in visited_states:
+                visited_states.add(current_state[0][0])
+                successors = problem.get_successors(current_state[0][0])
+                for successor in successors:
+                    fringe.push([successor, current_state[1] + [successor[1]]])
+    return []
+
 
 
 def null_heuristic(state, problem=None):

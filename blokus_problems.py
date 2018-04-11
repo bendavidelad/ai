@@ -3,6 +3,7 @@ from search import SearchProblem, ucs
 import util
 
 
+
 class BlokusFillProblem(SearchProblem):
     """
     A one-player Blokus game as a search problem.
@@ -55,8 +56,8 @@ class BlokusFillProblem(SearchProblem):
 #####################################################
 class BlokusCornersProblem(SearchProblem):
     def __init__(self, board_w, board_h, piece_list, starting_point=(0, 0)):
+        self.board = Board(board_w, board_h, 1, piece_list, starting_point)
         self.expanded = 0
-        "*** YOUR CODE HERE ***"
 
     def get_start_state(self):
         """
@@ -65,8 +66,12 @@ class BlokusCornersProblem(SearchProblem):
         return self.board
 
     def is_goal_state(self, state):
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        state0 = state.state
+        if state0[0, 0] == 0 and state0[len(state0)-1, 0] == 0 and state0[0, len(state0[0])-1] == 0 and \
+                                                                        state0[len(state0)-1, len(state0[0])-1] == 0:
+            return True
+        else:
+            return False
 
     def get_successors(self, state):
         """
@@ -89,8 +94,10 @@ class BlokusCornersProblem(SearchProblem):
         This method returns the total cost of a particular sequence of actions.  The sequence must
         be composed of legal moves
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        total_cost = 0
+        for action in actions:
+            total_cost += action.piece.get_num_tiles()
+        return total_cost
 
 
 def blokus_corners_heuristic(state, problem):
@@ -111,9 +118,9 @@ def blokus_corners_heuristic(state, problem):
 
 class BlokusCoverProblem(SearchProblem):
     def __init__(self, board_w, board_h, piece_list, starting_point=(0, 0), targets=[(0, 0)]):
+        self.board = Board(board_w, board_h, 1, piece_list, starting_point)
         self.targets = targets.copy()
         self.expanded = 0
-        "*** YOUR CODE HERE ***"
 
     def get_start_state(self):
         """
@@ -123,6 +130,7 @@ class BlokusCoverProblem(SearchProblem):
 
     def is_goal_state(self, state):
         "*** YOUR CODE HERE ***"
+
         util.raiseNotDefined()
 
     def get_successors(self, state):
