@@ -4,7 +4,6 @@ In search.py, you will implement generic search algorithms
 
 import util
 
-
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -102,8 +101,6 @@ def uniform_cost_search(problem):
                     counter += 1
     return []
 
-
-
 def search_helper(problem, fringe):
     visited_states = set()
     current_state = [(problem.get_start_state(), -1, 0), []]
@@ -123,8 +120,6 @@ def search_helper(problem, fringe):
                     fringe.push([successor, current_state[1] + [successor[1]]])
     return []
 
-
-
 def null_heuristic(state, problem=None):
     """
     A heuristic function estimates the cost from the current state to the nearest
@@ -137,9 +132,29 @@ def a_star_search(problem, heuristic=null_heuristic):
     """
     Search the node that has the lowest combined cost and heuristic first.
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    counter = 0
+    fringe = util.PriorityQueue()
+    visited_states = set()
+    current_state = [problem.get_start_state(), [], 0]
+    successors = problem.get_successors(current_state[0])
+    for successor in successors:
+        fringe.push((counter, [successor, [successor[1]], successor[2]]), successor[2]
+                    + heuristic(successor[0], problem))
+        counter += 1
 
+    while len(fringe.heap) != 0:
+        current_state = fringe.pop()
+        if problem.is_goal_state(current_state[1][0][0]):
+            return current_state[1][1]
+        else:
+            if current_state[1][0][0] not in visited_states:
+                visited_states.add(current_state[1][0][0])
+                successors = problem.get_successors(current_state[1][0][0])
+                for successor in successors:
+                    fringe.push((counter, [successor, current_state[1][1] + [successor[1]], current_state[1][2] +
+                                           successor[2]]), current_state[1][2] + successor[2] + heuristic(successor[0], problem))
+                    counter += 1
+    return []
 
 
 # Abbreviations
